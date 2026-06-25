@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INDRA | Intelligent National Digital Replica for Atmosphere | BAH 2026</title>
+    <style>
+        :root {
+            --bg-dark: #0a0e17;
+            --bg-card: #111827;
+            --bg-elevated: #1a2332;
+            --primary: #3b82f6;
+            --primary-glow: #60a5fa;
+            --accent: #f59e0b;
+            --accent-bright: #fbbf24;
+            --success: #10b981;
+            --danger: #ef4444;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border: #1e293b;
+            --border-light: #334155;
+            --gradient-hero: linear-gradient(135deg, #0a0e17 0%, #1e3a5f 50%, #0f172a 100%);
+            --gradient-blue: linear-gradient(135deg, #1e40af, #3b82f6);
+            --gradient-card: linear-gradient(180deg, #111827 0%, #0f172a 100%);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+            --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.3);
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-sm: 8px;
+            --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --max-width: 1280px;
+            --font-sans: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px;
+        }
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        /* ── PARTICLE BACKGROUND ─────────────────── */
+        .particle-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.15;
+            background-image:
+                radial-gradient(circle at 30% 20%, rgba(59, 130, 246, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 70% 50%, rgba(245, 158, 11, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.2) 0%, transparent 50%);
+        }
+
+        /* ── TOP NAVBAR (hack2skill-style) ───────── */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: rgba(10, 14, 23, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 68px;
+        }
+        .navbar-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: -0.3px;
+        }
+        .navbar-logo .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: var(--gradient-blue);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+        .navbar-links {
+            display: flex;
+            gap: 0.3rem;
+            list-style: none;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .navbar-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.78rem;
+            padding: 0.45rem 0.75rem;
+            border-radius: 6px;
+            transition: var(--transition);
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        .navbar-links a:hover {
+            color: var(--primary-glow);
+            background: rgba(59, 130, 246, 0.1);
+        }
+        .navbar-cta {
+            background: var(--gradient-blue);
+            color: #fff !important;
+            padding: 0.45rem 1rem !important;
+            border-radius: 20px !important;
+            font-weight: 700 !important;
+            font-size: 0.78rem;
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        .navbar-cta:hover {
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+            transform: translateY(-1px);
+        }
+
+        /* ── HERO (event-style) ──────────────────── */
+        .hero {
+            position: relative;
+            background: var(--gradient-hero);
+            padding: 5rem 2rem 6rem;
+            text-align: center;
+            overflow: hidden;
+            border-bottom: 1px solid var(--border);
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 25% 30%, rgba(59, 130, 246, 0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 75% 60%, rgba(245, 158, 11, 0.06) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            opacity: 0.04;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.3) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .hero-badge-row {
+            display: flex;
+            gap: 0.8rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 1.5rem;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: var(--primary-glow);
+            padding: 0.4rem 1rem;
+            border-radius: 30px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .hero-badge.accent {
+            background: rgba(245, 158, 11, 0.15);
+            border-color: rgba(245, 158, 11, 0.3);
+            color: var(--accent-bright);
+        }
+        .hero h1 {
+            font-size: clamp(3rem, 7vw, 5rem);
+            font-weight: 900;
+            letter-spacing: -1.5px;
+            line-height: 1.1;
+            margin-bottom: 0.8rem;
+            background: linear-gradient(135deg, #f1f5f9 0%, #60a5fa 50%, #fbbf24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero .tagline {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+        }
+        .hero .problem-id {
+            font-size: 1rem;
+            color: var(--accent);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+        }
+        .hero-desc {
+            max-width: 650px;
+            margin: 0 auto 2rem;
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+        .hero-stat {
+            text-align: center;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            min-width: 120px;
+        }
+        .hero-stat .stat-num {
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--primary-glow);
+            line-height: 1;
+        }
+        .hero-stat .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ── MAIN CONTAINER ──────────────────────── */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+        }
+
+        /* ── SECTION CARD (event-style) ──────────── */
+        .section-card {
+            background: var(--gradient-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2.5rem 2.2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-blue);
+            border-radius: 3px 3px 0 0;
+            opacity: 0.6;
+        }
+        .section-card:hover {
+            border-color: var(--border-light);
+            box-shadow: var(--shadow-lg);
+        }
+        .section-card h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            letter-spacing: -0.3px;
+        }
+        .section-card h2 .section-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        .section-card h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin: 1.5rem 0 0.7rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-card h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--primary-glow);
+            margin: 1rem 0 0.4rem;
+        }
+        .section-card p,
+        .section-card li {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            font-size: 0.93rem;
+        }
+        .section-card ul,
+        .section-card ol {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .section-card li {
+            margin-bottom: 0.35rem;
+        }
+        .section-card strong {
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+        .section-card a {
+            color: var(--primary-glow);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .section-card a:hover {
+            text-decoration: underline;
+        }
+
+        /* ── CODE BLOCKS ─────────────────────────── */
+        pre {
+            background: #0b1520;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 1.2rem 1.4rem;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 0.78rem;
+            line-height: 1.6;
+            color: #cbd5e1;
+            margin: 1rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        code {
+            font-family: var(--font-mono);
+            font-size: 0.82rem;
+            background: rgba(59, 130, 246, 0.12);
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            color: var(--primary-glow);
+        }
+        pre code {
+            background: transparent;
+            padding: 0;
+            color: #cbd5e1;
+        }
+
+        /* ── CALLOUT BOXES ───────────────────────── */
+        .callout {
+            border-left: 4px solid var(--primary);
+            background: rgba(59, 130, 246, 0.06);
+            padding: 1rem 1.3rem;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin: 1.2rem 0;
+            font-size: 0.9rem;
+        }
+        .callout.warning {
+            border-left-color: var(--accent);
+            background: rgba(245, 158, 11, 0.06);
+        }
+        .callout.danger {
+            border-left-color: var(--danger);
+            background: rgba(239, 68, 68, 0.06);
+        }
+        .callout.success {
+            border-left-color: var(--success);
+            background: rgba(16, 185, 129, 0.06);
+        }
+        .callout.info {
+            border-left-color: #8b5cf6;
+            background: rgba(139, 92, 246, 0.06);
+        }
+
+        /* ── TABLES ──────────────────────────────── */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            min-width: 600px;
+        }
+        th,
+        td {
+            border: 1px solid var(--border);
+            padding: 0.6rem 0.9rem;
+            text-align: left;
+        }
+        th {
+            background: var(--bg-elevated);
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* ── IMAGE ROW ───────────────────────────── */
+        .img-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+        .img-row img {
+            width: 220px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: var(--radius-md);
+            border: 2px solid var(--border);
+            box-shadow: var(--shadow-md);
+            transition: transform 0.35s ease, border-color 0.35s ease;
+        }
+        .img-row img:hover {
+            transform: scale(1.04);
+            border-color: var(--primary);
+        }
+        .img-caption {
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 0.4rem;
+        }
+
+        /* ── CHECKLIST ───────────────────────────── */
+        .checklist {
+            list-style: none;
+            padding-left: 0;
+        }
+        .checklist li {
+            padding: 0.4rem 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.6rem;
+            font-size: 0.9rem;
+        }
+        .checklist li::before {
+            content: '☐';
+            color: var(--primary-glow);
+            font-weight: 700;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        /* ── TAG PILLS ───────────────────────────── */
+        .tag-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 0.8rem 0;
+        }
+        .tag-pill {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            color: var(--primary-glow);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .tag-pill.accent {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.25);
+            color: var(--accent-bright);
+        }
+        .tag-pill.success {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.25);
+            color: var(--success);
+        }
+
+        /* ── DIVIDER ─────────────────────────────── */
+        .divider {
+            border: none;
+            border-top: 2px dashed var(--border);
+            margin: 2rem 0;
+        }
+
+        /* ── FOOTER ──────────────────────────────── */
+        .site-footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            background: var(--bg-card);
+            position: relative;
+            z-index: 1;
+        }
+        .site-footer .footer-brand {
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* ── RESPONSIVE ──────────────────────────── */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-wrap: wrap;
+                height: auto;
+                padding: 0.7rem 1rem;
+                gap: 0.5rem;
+            }
+            .navbar-links a {
+                font-size: 0.7rem;
+                padding: 0.3rem 0.5rem;
+            }
+            .hero {
+                padding: 3rem 1rem 4rem;
+            }
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            .hero-stats {
+                gap: 0.8rem;
+            }
+            .hero-stat {
+                min-width: 90px;
+                padding: 0.7rem 1rem;
+            }
+            .hero-stat .stat-num {
+                font-size: 1.4rem;
+            }
+            .section-card {
+                padding: 1.5rem 1.2rem;
+            }
+            .img-row img {
+                width: 140px;
+                height: 95px;
+            }
+            pre {
+                font-size: 0.68rem;
+                padding: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="particle-bg" aria-hidden="true"></div>
+
+    <!-- ═══════════════ NAVIGATION ═══════════════ -->
+    <nav class="navbar" aria-label="Main navigation">
+        <a href="#hero" class="navbar-logo">
+            <span class="logo-icon">🌐</span> INDRA
+        </a>
+        <ul class="navbar-links">
+            <li><a href="#problem">Problem</a></li>
+            <li><a href="#strategy">Strategy</a></li>
+            <li><a href="#pilot">Pilot</a></li>
+            <li><a href="#data">Data</a></li>
+            <li><a href="#modeling">Modeling</a></li>
+            <li><a href="#twin">Twin Core</a></li>
+            <li><a href="#validation">Validation</a></li>
+            <li><a href="#scenario">Scenario</a></li>
+            <li><a href="#dashboard">Dashboard</a></li>
+            <li><a href="#innovation">Innovation</a></li>
+            <li><a href="#architecture">Architecture</a></li>
+            <li><a href="#timeline">Timeline</a></li>
+            <li><a href="#checklist-section">Checklist</a></li>
+            <li><a href="#pitch">Pitch</a></li>
+            <li><a href="#cta-download" class="navbar-cta">View Plan</a></li>
+        </ul>
+    </nav>
+
+    <!-- ═══════════════ HERO ═══════════════ -->
+    <header class="hero" id="hero">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-content">
+            <div class="hero-badge-row">
+                <span class="hero-badge">🏆 BAH 2026</span>
+                <span class="hero-badge accent">Problem Statement 5</span>
+                <span class="hero-badge">AI-Powered Digital Twin</span>
+            </div>
+            <h1>INDRA</h1>
+            <p style="font-size:1.5rem;font-weight:700;color:#e2e8f0;margin-bottom:0.2rem;">Intelligent National Digital Replica for Atmosphere</p>
+            <p class="tagline">AI-Powered Digital Twin of India's Climate</p>
+            <p class="problem-id">COMPLETE APPROACH AND EXECUTION PLAN — v2</p>
+            <p class="hero-desc">A stateful, continuously updating virtual replica of India's climate — ingesting IMD + INSAT data, predicting forward, and enabling what-if scenario exploration for national climate resilience.</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <span class="stat-num">48h</span>
+                    <span class="stat-label">Build Time</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="stat-num">3 Tiers</span>
+                    <span class="stat-label">AI Models</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="stat-num">10yr</span>
+                    <span class="stat-label">IMD Data</span>
+                </div>
+                <div class="hero-stat">
+                    <span class="stat-num">Kerala</span>
+                    <span class="stat-label">Pilot Region</span>
+                </div>
+            </div>
+            <div class="img-row" style="margin-top:2rem;">
+                <img src="https://images.unsplash.com/photo-1590055531615-f16d36ffe8ec?w=400&h=280&fit=crop&auto=format" alt="Kerala backwaters aerial view" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1534008897995-27a23e72f08e?w=400&h=280&fit=crop&auto=format" alt="Monsoon clouds over India" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=400&h=280&fit=crop&auto=format" alt="Satellite view of Earth atmosphere" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=280&fit=crop&auto=format" alt="Digital globe technology" loading="lazy">
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══════════════ MAIN CONTENT ═══════════════ -->
+    <div class="main-container">
+
+        <!-- REVISION NOTES -->
+        <section class="section-card" id="revisions">
+            <h2><span class="section-icon">📝</span> REVISION NOTES</h2>
+            <p><em>(Delete this block before final submission if you want a clean doc — kept here so the team remembers why each call was made.)</em></p>
+            <ul>
+                <li>Pilot region switched <strong>Maharashtra → Kerala</strong> (smaller grid, cleaner monsoon signal, faster preprocessing, easier live demo).</li>
+                <li>Tier 1 model switched <strong>Random Forest → XGBoost/LightGBM</strong> (same effort, stronger result, better optics).</li>
+                <li><strong>ConvLSTM</strong> moved from "optional stretch" to <strong>"attempt seriously"</strong> — judges expect a deep learning component to actually be attempted, not just mentioned.</li>
+                <li><strong>INSAT LST</strong> added as a Day-0 parallel task (register for MOSDAC access immediately), but IMD-only remains the guaranteed fallback path — MOSDAC approval delay is outside your control and should not be able to sink the submission.</li>
+                <li>Added: DEM + NDVI static layers (cheap, reuse Earth Engine workflow), SHAP explainability, uncertainty intervals, scenario presets, climate risk index, advisory-style alerts, a "Today" home screen, and a minimal templated LLM Copilot as an explicit stretch goal.</li>
+                <li>Deliberately <strong>NOT</strong> added: a real MLOps stack (model registry, experiment tracking, monitoring). That's production engineering scope creep for a 48-hour PoC — faking it reads worse than not having it. The lightweight, honest version (versioned twin-state snapshots) is kept.</li>
+            </ul>
+        </section>
+
+        <!-- 1. PROBLEM RESTATEMENT -->
+        <section class="section-card" id="problem">
+            <h2><span class="section-icon">🎯</span> 1. PROBLEM RESTATEMENT</h2>
+            <p>ISRO is <strong>not</strong> asking for a rainfall forecasting model. They are asking for a <strong>STATEFUL, CONTINUOUSLY UPDATING VIRTUAL REPLICA</strong> of a piece of India's climate that can:</p>
+            <ol type="a">
+                <li>ingest national datasets (IMD + INSAT/MOSDAC),</li>
+                <li>hold a <strong>"current state"</strong> of the climate over a pilot region,</li>
+                <li>predict forward in time,</li>
+                <li>be perturbed by a user ("what if SST rises 1.5 degC") and show the downstream effect,</li>
+                <li>be inspected visually on a map/dashboard,</li>
+                <li>be validated honestly against real IMD observations.</li>
+            </ol>
+            <div class="callout warning">
+                <strong>A model alone satisfies (c).</strong> Everything else is what separates a "ML project" from a <strong>"Digital Twin,"</strong> and the rubric is explicitly built to reward the difference (see Section 17).
+            </div>
+            <div class="img-row">
+                <img src="https://images.unsplash.com/photo-1561484930-998b6a7b22e8?w=400&h=280&fit=crop&auto=format" alt="Satellite weather data visualization" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=400&h=280&fit=crop&auto=format" alt="Digital twin concept abstract" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400&h=280&fit=crop&auto=format" alt="India map with weather patterns" loading="lazy">
+            </div>
+            <p class="img-caption">Digital Twin concept: continuously updating virtual replica, not just a forecast model.</p>
+        </section>
+
+        <!-- 2. STRATEGIC POSITIONING -->
+        <section class="section-card" id="strategy">
+            <h2><span class="section-icon">♟️</span> 2. STRATEGIC POSITIONING — WHAT ACTUALLY WINS THIS PROBLEM</h2>
+            <p>Three things separate a top submission from the pack:</p>
+            <ol>
+                <li><strong>(1) A STATE OBJECT, not just a model.</strong> If you cannot point to a concrete data structure called "the current twin state" that updates over time, you don't have a digital twin — you have a forecasting script with a nice UI. Section 6 defines this explicitly.</li>
+                <li><strong>(2) HONEST VALIDATION AGAINST A BASELINE, WITH UNCERTAINTY.</strong> The number that wins the slide is <strong>skill over a naive baseline</strong> (climatology/persistence), reported alongside a calibrated uncertainty interval — not a bare RMSE, and not a vague "accuracy."</li>
+                <li><strong>(3) A SCENARIO MODULE THAT IS CLEARLY LABELLED AS AN AI EMULATION, NOT A PHYSICAL CLIMATE MODEL.</strong> Correctly framing it ("this is a learned statistical emulator for rapid scenario exploration, not a substitute for a GCM") is itself a point under "Problem Understanding & Clarity."</li>
+            </ol>
+            <p><strong>Build order, in priority:</strong> working baseline → working twin-state object → working API → working map UI → scenario engine → validation page → explainability/risk-index/advisory polish → LLM copilot (only if everything above is solid). <strong>A finished core loop beats five half-built fancy modules, every time.</strong></p>
+        </section>
+
+        <!-- 3. PILOT REGION SELECTION -->
+        <section class="section-card" id="pilot">
+            <h2><span class="section-icon">📍</span> 3. PILOT REGION SELECTION</h2>
+            <p><strong>DEFAULT: KERALA.</strong></p>
+            <ul>
+                <li>Smallest practical IMD grid footprint of the candidate regions — <strong>fastest preprocessing and training within 48 hours.</strong></li>
+                <li><strong>Cleanest monsoon-onset signal</strong> in the country — easy to narrate live ("here's the onset date, here's how the twin tracks it").</li>
+                <li>Strong west-coast orographic rainfall gradient still gives an interesting map even at small scale.</li>
+            </ul>
+            <p><strong>Alternate:</strong> Tamil Nadu, if you want to show both SW and retreating NE monsoon in one region.</p>
+            <p><em>Earlier draft used Maharashtra for local familiarity/rain-shadow contrast — still valid if your team would rather speak to a region you know personally; swap by changing one bounding box in config (Section 14).</em></p>
+            <div class="img-row">
+                <img src="https://images.unsplash.com/photo-1590055531615-f16d36ffe8ec?w=400&h=280&fit=crop&auto=format" alt="Kerala landscape" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=400&h=280&fit=crop&auto=format" alt="Kerala monsoon greenery" loading="lazy">
+            </div>
+            <p class="img-caption">Kerala: Clean monsoon signal, compact grid — ideal for a 48-hour PoC.</p>
+        </section>
+
+        <!-- 4. DATA STRATEGY -->
+        <section class="section-card" id="data">
+            <h2><span class="section-icon">📊</span> 4. DATA STRATEGY</h2>
+            <h3>4.1 Sources and years (locked decision)</h3>
+            <p><strong>Mandatory (download manually from IMD dropdowns, Day 0, first task):</strong></p>
+            <ul>
+                <li><strong>Gridded Rainfall,</strong> 0.25×0.25 deg, 2015–2024 (10 files) — Grid: 135×129, float32, lon 66.5E–100.0E, lat 6.5N–38.5N</li>
+                <li><strong>Maximum Temperature,</strong> 1.0×1.0 deg, 2015–2024 (10 files) — Grid: 31×31, float32, lon 67.5E–97.5E, lat 7.5N–37.5N</li>
+                <li><strong>Minimum Temperature,</strong> 1.0×1.0 deg, 2015–2024 (10 files) — Same grid as max temp.</li>
+            </ul>
+            <p><strong>Total: 30 binary files.</strong> Known, bounded, achievable on Day 0.</p>
+
+            <div class="callout info">
+                <strong>Day-0 PARALLEL task (start the clock immediately, don't wait):</strong> Register for MOSDAC access and request <strong>INSAT LST</strong> (product 3RIMG_L2B_LST). If approval lands within the hackathon window, LST becomes a 4th input channel — a real differentiator. If approval has not landed by Hour 8, proceed on the <strong>IMD-only path</strong> without it. This is a deliberate fallback, not a failure — document it as such on the future-work slide.
+            </div>
+
+            <p><strong>Free static layers (cheap, reuse your existing Earth Engine workflow):</strong></p>
+            <ul>
+                <li><strong>DEM (elevation)</strong> — helps the model learn orographic effects, one GEE export.</li>
+                <li><strong>NDVI</strong> — cheap proxy for land-surface/vegetation state, also a single GEE export. Skip land cover and soil moisture for the MVP; mention them as future-work layers instead.</li>
+            </ul>
+
+            <h3>4.2 Why 10 years, not 124</h3>
+            <p>124 years of daily gridded data is hundreds of GB once decoded and is irrelevant to a PoC over a pilot region. Ten years (3,650+ daily grids) is enough to learn a seasonal cycle and short-lag persistence structure, and is small enough to preprocess on a laptop. <strong>State this scoping decision explicitly</strong> — judges reward a justified decision more than raw data volume.</p>
+
+            <h3>4.3 Folder layout</h3>
+            <pre><code>datasets/
+        rainfall/         2015/ ... 2024/   (raw .GRD binaries, 135x129)
+        max_temperature/  2015/ ... 2024/   (raw .GRD binaries, 31x31)
+        min_temperature/  2015/ ... 2024/   (raw .GRD binaries, 31x31)
+        insat_lst/        (Day-0 parallel task, drop in if/when it lands)
+        static/           dem.tif  ndvi.tif
+        processed/        daily_tensors/    (NetCDF/Zarr, see 4.5)</code></pre>
+
+            <h3>4.4 IMD binary decoder (native Python)</h3>
+            <p>Module: <code>backend/preprocessing/imd_binary_decoder.py</code></p>
+            <p><strong>Responsibilities:</strong></p>
+            <ol>
+                <li>Detect leap year (365 vs 366 records) from the requested year.</li>
+                <li>Read the flat binary file at the documented record size (rainfall: 135×129×4 bytes/day; temp: 31×31×4 bytes/day).</li>
+                <li>Decode float32 values into a NumPy array, shape <code>[days, lat, lon]</code>.</li>
+                <li>Generate lat/lon coordinate arrays from the documented grid origins.</li>
+                <li>Handle missing-value flags: <strong>-999</strong> for rainfall, <strong>99.9</strong> for temperature — never silently zero-fill.</li>
+                <li>Wrap into an <code>xarray.DataArray</code> with a proper daily time index.</li>
+                <li>Export to NetCDF/Zarr once per year — raw binary decoded only once.</li>
+            </ol>
+
+            <h3>4.5 Preprocessing pipeline</h3>
+            <p>Raw binary → Python decoder (4.4) → xarray with coordinates → clip to pilot region → <strong>regrid temperature (31×31, 1deg) onto the rainfall grid (135×129, 0.25deg) via bilinear interpolation</strong> → missing value handling → normalize per-channel (store the scaler) → stack into daily tensors → add static DEM/NDVI layers → validate (Section 4.6) → write NetCDF/Zarr to <code>processed/</code>.</p>
+            <div class="callout danger">
+                <strong>⚠️ Regridding the 31×31 temperature grid onto the 135×129 rainfall grid is the single most common bug source in this entire pipeline.</strong> Budget real debugging time for this exact step, and sanity-check by plotting before/after regrid maps side by side before moving on.
+            </div>
+
+            <h3>4.6 Data integrity validation (before training starts)</h3>
+            <p>Check per year/file: file size matches expected record count, day count matches leap-year rule, grid dimensions match spec, missing-value rate is within a sane range, latitude/longitude ordering is correct (rainfall data is stored south-to-north). Write a <code>validation_report.json</code> — this doubles as evidence of rigor in your data-handling slide.</p>
+
+            <h3>4.7 Daily tensor schema</h3>
+            <p>Shape: <code>[H, W, C]</code></p>
+            <p><strong>Core channels (always):</strong> rainfall_mm, max_temp_C, min_temp_C, elevation_m, ndvi</p>
+            <p><strong>Stretch channel (if MOSDAC lands in time):</strong> lst_C</p>
+
+            <h3>4.8 Dataset registry (single source of truth)</h3>
+            <pre><code>DATASETS = {
+            "rainfall":  {"resolution": 0.25, "shape": [135, 129], "unit": "mm"},
+            "max_temp":  {"resolution": 1.0,  "shape": [31, 31],   "unit": "C"},
+            "min_temp":  {"resolution": 1.0,  "shape": [31, 31],   "unit": "C"},
+            "insat_lst": {"resolution": None, "shape": None,        "unit": "C",
+                        "status": "stretch - confirm MOSDAC access first"},
+        }</code></pre>
+        </section>
+
+        <!-- 5. MODELING STRATEGY -->
+        <section class="section-card" id="modeling">
+            <h2><span class="section-icon">🧠</span> 5. MODELING STRATEGY — PHASED, ESCALATING TOWARD DEEP LEARNING</h2>
+            <p>Build in this order. Each tier is independently demoable — stop at whichever tier the clock allows, but <strong>Tier 2 should be a real attempt, not an afterthought,</strong> since judges expect a deep-learning component.</p>
+
+            <h3>TIER 0 — Baselines (build first, ~1–2 hours, never skip)</h3>
+            <ul>
+                <li><strong>Persistence:</strong> tomorrow = today.</li>
+                <li><strong>Climatology:</strong> tomorrow = historical mean for that day-of-year.</li>
+            </ul>
+            <p>These exist purely to give every later tier something honest to beat.</p>
+
+            <h3>TIER 1 — Gradient-boosted core model (the guaranteed working result)</h3>
+            <p><strong>XGBoost or LightGBM, per-pixel,</strong> with lag features (t-1, t-2, t-3, day-of-year, lat, lon, elevation, ndvi) → predicts rainfall_mm and temp for t+1. Trains in minutes, no GPU dependency, gives clean SHAP feature attributions for free (Section 10), and is the lowest-risk path to a working, validated prediction by hour 10–12. <strong>This is your fallback-safe primary result if nothing else finishes.</strong></p>
+
+            <h3>TIER 2 — ConvLSTM (the deep-learning component — attempt this seriously)</h3>
+            <p><strong>ConvLSTM over the [H,W,C] grid sequence</strong> → predicts the next 1–3 day grids directly, capturing spatial structure (rain systems moving across the grid) that Tier 1 cannot. Start this as soon as Tier 1 is validated and the API is wired to it — do not let Tier 2 block the rest of the pipeline from being demoable. If Tier 2 underperforms or doesn't converge in time, present it honestly as <strong>"in progress, partial results"</strong> rather than hiding it.</p>
+
+            <h3>TIER 3 — Stretch refinements</h3>
+            <ul>
+                <li>Quantile regression or ensemble spread → prediction uncertainty intervals (feeds Section 10's confidence layer).</li>
+                <li>A lightweight temporal-attention/Informer-style refinement layer on top of Tier 2, if a team member has the time and GPU access.</li>
+            </ul>
+
+            <div class="callout success">
+                <strong>Best presentation if time allows:</strong> show Tier 1 (XGBoost) as the production-ready, fully validated result, and Tier 2 (ConvLSTM) as the spatial-context research direction with its own validation numbers. <strong>"Simple model that works + advanced model we pushed on"</strong> is a stronger technical narrative than either alone.
+            </div>
+
+            <p><strong>Derived output (cheap, add once Tier 1 predictions exist):</strong> a <strong>CLIMATE RISK INDEX</strong>, a simple weighted combination of rainfall anomaly and temperature anomaly against the 2015–2024 climatology, surfaced as a single 0–100 score per grid cell/district.</p>
+            <div class="img-row">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=280&fit=crop&auto=format" alt="AI neural network visualization" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1518432031352-d6fc5c10da5a?w=400&h=280&fit=crop&auto=format" alt="Deep learning abstract" loading="lazy">
+            </div>
+        </section>
+
+        <!-- 6. DIGITAL TWIN CORE -->
+        <section class="section-card" id="twin">
+            <h2><span class="section-icon">🔗</span> 6. DIGITAL TWIN CORE — WHAT MAKES THIS A TWIN, NOT JUST A MODEL</h2>
+            <p><strong>TWIN STATE OBJECT</strong> (a real, inspectable thing — show it in the demo):</p>
+            <pre><code>{
+            region_id: "KL_pilot",
+            timestamp: "2024-09-12",
+            observed: { rainfall, max_temp, min_temp, ndvi, [lst] },
+            predicted: { rainfall_t1, temp_t1, ... },
+            uncertainty: { rainfall_ci, temp_ci },        &lt;- Tier 3
+            risk_index: 0-100,                             &lt;- Section 5
+            version: int,
+            provenance: "IMD-gridded-v1 + XGBoost-v2 + ConvLSTM-v1"
+        }</code></pre>
+
+            <p><strong>UPDATE LOOP</strong> (runs whenever new data lands, or on a schedule for the demo): new daily file arrives → preprocess → blend into canonical state (replace observed values, recompute predicted/uncertainty/risk_index) → increment version → persist snapshot → push to API/dashboard.</p>
+
+            <p><strong>THREE DISTINCT MODES</strong> your dashboard must visibly expose as three different things:</p>
+            <ol>
+                <li><strong>REPLAY</strong> (time-travel through stored history, 2015–2024)</li>
+                <li><strong>FORECAST</strong> (canonical state's prediction for t+1, t+2, t+3)</li>
+                <li><strong>SCENARIO</strong> (a forked, non-canonical state created by the scenario engine, Section 8 — never overwrites the canonical state)</li>
+            </ol>
+            <p>Store snapshots as lightweight JSON/Parquet keyed by region+date+version. <strong>This versioning IS your honest, lightweight substitute for a full MLOps stack</strong> — you can say "twin state v47, here is v48" out loud in the demo without needing a real model registry behind it.</p>
+        </section>
+
+        <!-- 7. VALIDATION FRAMEWORK -->
+        <section class="section-card" id="validation">
+            <h2><span class="section-icon">✅</span> 7. VALIDATION FRAMEWORK</h2>
+            <p><strong>Split (walk-forward, no leakage):</strong> Train: 2015–2022 | Validation: 2023 | Test: 2024 (touch once)</p>
+            <p><strong>Continuous metrics:</strong> RMSE, MAE, R-squared, Pearson correlation — report all four, per variable.</p>
+            <p><strong>Event metrics</strong> (rain-day vs no-rain-day, threshold ≥2.5mm): POD, FAR, CSI.</p>
+            <p><strong>Uncertainty:</strong> if Tier 3 is built, report interval coverage — a calibrated-but-wide interval is more credible than an overconfident point estimate.</p>
+            <div class="callout success">
+                <strong>THE NUMBER THAT WINS THE SLIDE:</strong> skill score against Tier 0 baseline —<br>
+                <code>Skill = 1 − (RMSE_model / RMSE_climatology)</code><br>
+                Report per-variable, per-tier (Tier 1 skill, Tier 2 skill). A skill score of <strong>0.25–0.35</strong> over climatology for next-day rainfall in a small pilot region is believable and defensible — do not inflate it.
+            </div>
+        </section>
+
+        <!-- 8. SCENARIO ENGINE -->
+        <section class="section-card" id="scenario">
+            <h2><span class="section-icon">🎛️</span> 8. SCENARIO ENGINE (formerly "what-if simulator")</h2>
+            <p>Two entry points into the same underlying mechanism:</p>
+            <p><strong>(a) MANUAL SLIDERS</strong> — user adjusts temperature delta, rainfall delta, (stretch: SST/LST delta).</p>
+            <p><strong>(b) PRESET SCENARIOS</strong> — one click loads a pre-defined parameter combination:</p>
+            <ul>
+                <li><strong>Heatwave</strong> (+3–4°C max temp, −humidity proxy)</li>
+                <li><strong>Heavy Rain Event</strong> (+40–60% rainfall over 2–3 days)</li>
+                <li><strong>Weak Monsoon</strong> (−20–30% JJAS rainfall)</li>
+                <li><strong>Strong Monsoon</strong> (+15–25% JJAS rainfall)</li>
+                <li><strong>El Niño-like</strong> (warmer SST/LST signal, drier bias) [if LST channel available]</li>
+                <li><strong>La Niña-like</strong> (cooler SST/LST signal, wetter bias)</li>
+            </ul>
+            <p>Presets are just named parameter sets calling the same mechanism as (a) — low extra engineering cost, high demo impact.</p>
+            <p><strong>Mechanics (identical for both entry points):</strong></p>
+            <ol>
+                <li>Take the CURRENT canonical twin state's input tensor.</li>
+                <li>Apply the perturbation in real, un-normalized units, then re-apply the stored scaler (Section 4.5).</li>
+                <li>Run inference with the frozen, already-trained Tier 1 (and Tier 2 if ready) model on the perturbed tensor.</li>
+                <li>Store the result as a new SCENARIO state (Section 6) — <strong>never overwrites canonical state.</strong></li>
+                <li>Dashboard shows a side-by-side delta map (baseline forecast vs. scenario forecast) plus a one-line plain-English explanation pulled from SHAP attributions.</li>
+            </ol>
+            <p><strong>Pre-bake one working preset scenario for the live demo</strong> — don't improvise live.</p>
+            <div class="callout warning">
+                <strong>MANDATORY UI DISCLAIMER (say it out loud in the pitch too):</strong> this is a learned statistical emulator trained on historical IMD/INSAT patterns for rapid scenario exploration — <strong>not a substitute for a physical General Circulation Model.</strong> Stating this clearly is a strength under "Problem Understanding & Clarity," not a weakness.
+            </div>
+        </section>
+
+        <!-- 9. DASHBOARD / VISUALIZATION -->
+        <section class="section-card" id="dashboard">
+            <h2><span class="section-icon">🖥️</span> 9. DASHBOARD / VISUALIZATION</h2>
+            <p>Build in this order:</p>
+            <ol>
+                <li><strong>TODAY screen (home)</strong> — current observed state, tomorrow's forecast, risk index, confidence, last-update timestamp. Modeled deliberately on a familiar "weather app" mental model so judges grasp it in 5 seconds.</li>
+                <li><strong>Map view</strong> — pilot region, layer toggle: Observed / Predicted / Scenario, for rainfall, temperature, and risk index.</li>
+                <li><strong>Timeline scrubber</strong> — drag through 2015–2024 (Replay mode).</li>
+                <li><strong>Validation page</strong> — metrics table (Section 7) + predicted-vs-actual scatter plot.</li>
+                <li><strong>Scenario panel</strong> — sliders + presets (Section 8) + delta map.</li>
+                <li><strong>District drill-down</strong> — click a cell/district → trend chart + risk flag + AI-generated advisory line (Section 10).</li>
+                <li><strong>(Stretch) Climate Copilot panel</strong> (Section 10).</li>
+            </ol>
+            <p><strong>Tech:</strong> React + Leaflet (fastest path to a working choropleth grid in a hackathon) + Recharts for charts. FastAPI backend serving twin-state JSON and predict/scenario endpoints.</p>
+            <div class="img-row">
+                <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=280&fit=crop&auto=format" alt="Dashboard UI concept" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&h=280&fit=crop&auto=format" alt="Data visualization dashboard" loading="lazy">
+            </div>
+        </section>
+
+        <!-- 10. INNOVATION FEATURES -->
+        <section class="section-card" id="innovation">
+            <h2><span class="section-icon">💡</span> 10. INNOVATION FEATURES — PRIORITIZED, ONLY AFTER THE CORE LOOP WORKS</h2>
+            <h3>HIGH IMPACT, LOW EFFORT (do these first, in this order):</h3>
+            <ul>
+                <li><strong>SHAP feature attribution</strong> per Tier 1 prediction (near-free with XGBoost) — shown as a short "why this prediction" line.</li>
+                <li><strong>Skill score vs baseline</strong>, displayed prominently (already computed, Section 7).</li>
+                <li><strong>Climate Risk Index</strong> (Section 5) surfaced on the Today screen and map.</li>
+                <li><strong>District click → trend + risk flag + one-line advisory</strong>, e.g.: <em>"Flood Risk: High | Reason: rainfall predicted &gt;120mm, temp 29°C | Confidence: 91%"</em></li>
+                <li><strong>Scenario presets</strong> (Section 8(b)).</li>
+            </ul>
+
+            <h3>MEDIUM IMPACT, MEDIUM EFFORT (only if the above finish early):</h3>
+            <ul>
+                <li><strong>Prediction uncertainty intervals</strong> (Tier 3, Section 5) shown as a shaded band, not just a point estimate.</li>
+                <li><strong>Attention/saliency visualization on ConvLSTM</strong> (Tier 2), if it trains successfully — shows spatially WHERE the model is "looking."</li>
+            </ul>
+
+            <h3>STRETCH (attempt only after every section above is fully working and demoable):</h3>
+            <ul>
+                <li><strong>CLIMATE COPILOT:</strong> a minimal templated assistant, not a full RAG system. Implementation: take the current twin-state JSON (Section 6) + a short canned context paragraph about the pilot region, feed both into a single LLM prompt with the user's question, return the answer. This answers "why is rainfall decreasing in [region]" or "compare 2023 and 2024" using only the structured numbers already in the twin state — <strong>a thin natural-language wrapper around data you already have.</strong></li>
+            </ul>
+
+            <h3>DELIBERATELY NOT ATTEMPTED for a 48-hour PoC:</h3>
+            <ul>
+                <li>A real model registry/experiment-tracking stack</li>
+                <li>Land cover and soil moisture layers</li>
+                <li>A 3D globe view</li>
+                <li>Multi-region national-scale serving</li>
+            </ul>
+            <p>All four are legitimate roadmap items, none are achievable credibly in 48 hours alongside everything above.</p>
+        </section>
+
+        <!-- 11. SYSTEM ARCHITECTURE -->
+        <section class="section-card" id="architecture">
+            <h2><span class="section-icon">🏗️</span> 11. SYSTEM ARCHITECTURE</h2>
+            <pre><code>   IMD (rainfall, max/min temp)   INSAT/MOSDAC (LST) [Day-0 parallel]   DEM/NDVI (GEE)
+            |                                |                              |
+            +----------------+---------------+------------------------------+
+                              |
+                     DATA FUSION + PREPROCESSING LAYER
+            (binary decode -> regrid -> clean -> normalize -> static layers)
+                              |
+                       DAILY TENSOR STORE  (Section 4.7 schema)
+                              |
+            +-----------------+------------------+
+            |                                    |
+     AI PREDICTION ENGINE                  TWIN STATE STORE
+   (Tier0 baseline, Tier1 XGBoost,         (Section 6 object,
+    Tier2 ConvLSTM, Tier3 stretch)          versioned snapshots)
+            |                                    |
+            +-----------------+------------------+
+                              |
+                    CLIMATE INTELLIGENCE LAYER
+        (risk index, SHAP/attention explainability, advisories)
+                              |
+                              +------------------------+
+                              |                        |
+                     SCENARIO ENGINE            CLIMATE COPILOT [stretch]
+                   (sliders + presets)          (templated LLM over state)
+                              |                        |
+                              +-----------+------------+
+                                          |
+                                  FASTAPI BACKEND
+                  (state / predict / scenario / advisory endpoints)
+                                          |
+                                  REACT + LEAFLET UI
+        (Today screen, map, timeline, validation, scenario, drill-down)
+                                          |
+                                       END USER</code></pre>
+        </section>
+
+        <!-- 12. TECH STACK -->
+        <section class="section-card" id="techstack">
+            <h2><span class="section-icon">⚙️</span> 12. TECH STACK — FINAL, TRIMMED FOR 48 HOURS</h2>
+            <div class="table-wrap">
+                <table>
+                    <tr><th>Layer</th><th>Technology</th></tr>
+                    <tr><td>Frontend</td><td>React, Leaflet, Recharts, Tailwind/plain CSS</td></tr>
+                    <tr><td>Backend</td><td>FastAPI, Python</td></tr>
+                    <tr><td>Data/ML</td><td>xarray, rioxarray, NumPy, pandas, scikit-learn, XGBoost/LightGBM (Tier 1 primary), PyTorch (Tier 2 ConvLSTM), SHAP (explainability)</td></tr>
+                    <tr><td>Geospatial source</td><td>Google Earth Engine (DEM, NDVI) — same workflow already used for CROP, reusable here directly</td></tr>
+                    <tr><td>Stretch</td><td>A single LLM API call (templated prompt) for the Climate Copilot — no agent framework, no vector DB, just structured JSON in, text out</td></tr>
+                    <tr><td>Storage</td><td>Parquet/JSON snapshots for twin state; NetCDF/Zarr for tensors. Skip PostgreSQL/PostGIS and Redis unless already running cold</td></tr>
+                    <tr><td>Deploy</td><td>Frontend on Vercel, backend on Render/Railway, or run both locally — a flawless local demo beats a flaky cloud deploy</td></tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- 13. PROJECT / FOLDER STRUCTURE -->
+        <section class="section-card" id="folderstructure">
+            <h2><span class="section-icon">📁</span> 13. PROJECT / FOLDER STRUCTURE</h2>
+            <pre><code>INDRA/
+        backend/
+        api/                 (FastAPI routes: state, predict, scenario, advisory, copilot)
+        twin_engine/          (state object, update loop, snapshot store)
+        models/
+            baseline/           (Tier 0)
+            xgboost_core/        (Tier 1)
+            convlstm/             (Tier 2)
+            uncertainty/           (Tier 3, stretch)
+        preprocessing/
+            imd_binary_decoder.py
+            regrid.py
+            static_layers.py    (DEM/NDVI via GEE)
+        intelligence/
+            risk_index.py
+            explainability.py   (SHAP/attention)
+            advisory.py
+        copilot/               (stretch - templated LLM wrapper)
+        config/
+            data_config.py       (single source of truth)
+        frontend/
+        src/
+            today/ map/ timeline/ validation/ scenario/ drilldown/ copilot/ (stretch)
+        datasets/
+        rainfall/2015/ ... 2024/
+        max_temperature/2015/ ... 2024/
+        min_temperature/2015/ ... 2024/
+        insat_lst/             (Day-0 parallel, drop in if it lands)
+        static/dem.tif  static/ndvi.tif
+        processed/daily_tensors/
+        docs/
+        approach.txt    (this document)
+        IMD_BINARY_FORMAT.md
+        validation_report.json
+        slides/</code></pre>
+        </section>
+
+        <!-- 14. CONFIG SNIPPET -->
+        <section class="section-card" id="config">
+            <h2><span class="section-icon">🔧</span> 14. CONFIG SNIPPET — config/data_config.py</h2>
+            <pre><code>YEARS = [2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024]
+
+        TRAIN_YEARS = [y for y in YEARS if y <= 2022]
+        VAL_YEARS   = [2023]
+        TEST_YEARS  = [2024]
+
+        PILOT_REGION = {
+        "name": "Kerala_pilot",
+        "lat_min": 8.0, "lat_max": 12.8,
+        "lon_min": 74.8, "lon_max": 77.5,
+        }
+        # Alternate (swap if you'd rather present a region you know personally):
+        # PILOT_REGION = {"name": "Maharashtra_pilot", "lat_min": 15.5,
+        #                 "lat_max": 22.0, "lon_min": 72.5, "lon_max": 80.5}
+
+        DATASETS = {
+        "rainfall":  {"resolution": 0.25, "shape": [135, 129], "unit": "mm",
+                    "lon_origin": 66.5, "lat_origin": 6.5, "missing": -999},
+        "max_temp":  {"resolution": 1.0,  "shape": [31, 31],   "unit": "C",
+                    "lon_origin": 67.5, "lat_origin": 7.5,  "missing": 99.9},
+        "min_temp":  {"resolution": 1.0,  "shape": [31, 31],   "unit": "C",
+                    "lon_origin": 67.5, "lat_origin": 7.5,  "missing": 99.9},
+        "insat_lst": {"status": "stretch - confirm MOSDAC access by Hour 8"},
+        }
+
+        CHANNELS_CORE    = ["rainfall_mm", "max_temp_C", "min_temp_C",
+                        "elevation_m", "ndvi"]
+        CHANNELS_STRETCH = ["lst_C"]
+
+        RAIN_DAY_THRESHOLD_MM = 2.5   # for POD/FAR/CSI event metrics</code></pre>
+            <div class="callout info">
+                <strong>Every loader/script must import YEARS, PILOT_REGION, DATASETS, etc. from here.</strong> Never hardcode a year, region, or grid shape anywhere else — this single file is what makes "scalable to additional years/regions/datasets" a true claim on the last slide instead of an empty one.
+            </div>
+        </section>
+
+        <!-- 15. 48-HOUR EXECUTION TIMELINE -->
+        <section class="section-card" id="timeline">
+            <h2><span class="section-icon">⏱️</span> 15. 48-HOUR EXECUTION TIMELINE (assumes a team of 3–4)</h2>
+            <p><strong>Roles:</strong> Data/ML lead, Backend lead, Frontend lead, Docs/Presentation lead (double up with one of the above if team is 3 people).</p>
+            <div class="table-wrap">
+                <table>
+                    <tr><th>Hours</th><th>Task</th></tr>
+                    <tr><td>0–2</td><td><strong>All:</strong> download the 30 IMD files manually. Submit MOSDAC registration for INSAT LST. Confirm Kerala pilot bbox. Set up repo + data_config.py.</td></tr>
+                    <tr><td>2–8</td><td><strong>Data/ML:</strong> build the IMD binary decoder + regridding pipeline, produce daily tensors for 2015–2024. Pull DEM/NDVI via Earth Engine. <strong>Backend:</strong> scaffold FastAPI app, define twin-state schema, stub endpoints with dummy data. <strong>Frontend:</strong> scaffold React app, Leaflet rendering the pilot region with a static color layer.</td></tr>
+                    <tr><td>8–14</td><td><strong>Data/ML:</strong> build Tier 0 baselines + Tier 1 XGBoost. Lock the train/val/test split. Check MOSDAC approval status — if not landed, proceed IMD-only. <strong>Backend:</strong> wire the real twin-state object + snapshot store.</td></tr>
+                    <tr><td>14–20</td><td><strong>Data/ML:</strong> compute Section 7 validation metrics on 2024 test year for Tier 1. Begin Tier 2 ConvLSTM training in parallel. <strong>Backend:</strong> implement /predict and /state with real Tier 1 output. <strong>Frontend:</strong> connect map to real /state; build timeline scrubber.</td></tr>
+                    <tr><td>20–28</td><td><strong>Backend+ML:</strong> implement /scenario endpoint. Wire Tier 2 into the API once validated. <strong>Frontend:</strong> build scenario panel + delta map. Build the Today screen.</td></tr>
+                    <tr><td>28–34</td><td><strong>Data/ML:</strong> SHAP explainability + climate risk index + advisory text generation. <strong>Frontend:</strong> validation page + district drill-down.</td></tr>
+                    <tr><td>34–40</td><td><strong>Whole team:</strong> integration pass — run the full loop end to end, fix breakages. <strong>Protect this block; no new features.</strong></td></tr>
+                    <tr><td>40–44</td><td><strong>Only if core loop is fully stable:</strong> attempt Climate Copilot stretch or Tier 3 uncertainty intervals. Otherwise polish UI/copy and fix edge cases.</td></tr>
+                    <tr><td>44–47</td><td><strong>Docs/Presentation:</strong> build slide deck (Section 18). Rehearse live demo with the ONE pre-baked scenario preset. Time the pitch.</td></tr>
+                    <tr><td>47–48</td><td><strong>Buffer.</strong> Final rehearsal.</td></tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- 16. RISKS AND FALLBACKS -->
+        <section class="section-card" id="risks">
+            <h2><span class="section-icon">⚠️</span> 16. RISKS AND FALLBACKS</h2>
+            <div class="table-wrap">
+                <table>
+                    <tr><th>Risk</th><th>Fallback</th></tr>
+                    <tr><td>MOSDAC/INSAT registration approval doesn't arrive in time.</td><td>Ship the IMD-only path (already a complete, valid PoC). State on the future-work slide that registration was submitted Day 0 as proof of intent to integrate INSAT.</td></tr>
+                    <tr><td>ConvLSTM (Tier 2) won't train stably in the time available.</td><td>Present Tier 1 (XGBoost) as the primary, fully validated result; mention the ConvLSTM attempt honestly as "in progress, partial results" rather than hiding or overclaiming it.</td></tr>
+                    <tr><td>Regridding the 31×31 temperature grid onto the 135×129 rainfall grid introduces subtle bugs.</td><td>Dedicated debugging time already budgeted in Hour 2–8; sanity check via side-by-side before/after regrid plots before moving on.</td></tr>
+                    <tr><td>No GPU available.</td><td>Tier 1 runs fine on CPU. For Tier 2, shrink the Kerala grid further or use a free-tier Colab GPU as backup compute.</td></tr>
+                    <tr><td>Climate Copilot (LLM stretch) is slow, costs tokens, or returns inconsistent answers under demo pressure.</td><td>Pre-bake 3–4 question/answer pairs as a guaranteed demo path; treat live free-text input as a bonus, not the core promise.</td></tr>
+                    <tr><td>Running out of time before the scenario engine is built.</td><td>The priority order in Section 2 exists exactly for this — a working core loop without the scenario engine still scores on 6 of 8 rubric criteria; a scenario engine with no working core loop underneath it scores on almost none.</td></tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- 17. EVALUATION CRITERIA -->
+        <section class="section-card" id="evaluation">
+            <h2><span class="section-icon">🏆</span> 17. EVALUATION CRITERIA → WHAT TO SHOW (pitch checklist)</h2>
+            <div class="table-wrap">
+                <table>
+                    <tr><th>Criterion</th><th>Where Covered</th></tr>
+                    <tr><td>Problem Understanding & Clarity</td><td>Section 1 framing + scenario-engine disclaimer (Sec 8) + 10-year scoping justification (Sec 4.2)</td></tr>
+                    <tr><td>Data Usage & Pre-processing</td><td>Section 4 pipeline + regrid sanity checks + validation_report.json</td></tr>
+                    <tr><td>Model Development & Tech Approach</td><td>Section 5 phased tiers, explicitly including the ConvLSTM attempt — explain WHY each tier was chosen</td></tr>
+                    <tr><td>Prediction Performance & Validation</td><td>Section 7: metrics + skill score vs baseline + uncertainty coverage if Tier 3 built. <strong>Lead with this.</strong></td></tr>
+                    <tr><td>Digital Twin Concept Implementation</td><td>Section 6: show the actual state object, version incrementing, Replay/Forecast/Scenario live</td></tr>
+                    <tr><td>Visualization & User Interface</td><td>Section 9, Today screen first</td></tr>
+                    <tr><td>Innovation & Creativity</td><td>Section 10: risk index, SHAP, advisories, scenario presets, and the Copilot if it made it in</td></tr>
+                    <tr><td>Presentation & Communication</td><td>Section 18</td></tr>
+                </table>
+            </div>
+        </section>
+
+        <!-- 18. PITCH STRUCTURE -->
+        <section class="section-card" id="pitch">
+            <h2><span class="section-icon">🎤</span> 18. PITCH STRUCTURE (slide-by-slide, ~6–8 minutes)</h2>
+            <ol>
+                <li><strong>Problem + why a "model" isn't enough</strong> — what a real digital twin needs.</li>
+                <li><strong>Pilot region (Kerala) + data strategy</strong> (10 years IMD + INSAT attempt, justified scope).</li>
+                <li><strong>Architecture diagram</strong> (Section 11) — one clean slide.</li>
+                <li><strong>Live demo: Today screen</strong> (current state, forecast, risk index).</li>
+                <li><strong>Live demo: Replay mode</strong> (scrub through history) + Forecast.</li>
+                <li><strong>Validation slide:</strong> metrics + skill score vs baseline — your proof point.</li>
+                <li><strong>Live demo: Scenario engine</strong> — one preset (e.g. "Weak Monsoon") + the honest emulator disclaimer.</li>
+                <li><strong>Innovation highlights:</strong> SHAP explainability, risk index, advisories, Copilot if built — 20–30 sec each.</li>
+                <li><strong>National Scale Deployment Roadmap:</strong> District → State → India → South Asia, plus INSAT/MOSDAC full integration and Tier 3 uncertainty as concrete, named next steps.</li>
+                <li><strong>Close:</strong> one sentence tying back to Atmanirbhar Bharat / national climate resilience framing from the original problem statement.</li>
+            </ol>
+        </section>
+
+        <!-- 19. CLOSING CHECKLIST -->
+        <section class="section-card" id="checklist-section">
+            <h2><span class="section-icon">📋</span> 19. CLOSING CHECKLIST — DO NOT SUBMIT WITHOUT</h2>
+            <ul class="checklist">
+                <li>30 IMD files downloaded, organized under datasets/ as specified</li>
+                <li>MOSDAC registration submitted Day 0 (landed or not, documented either way)</li>
+                <li>data_config.py is the only place YEARS/region/grid shapes are defined</li>
+                <li>Tier 0 baselines computed and stored</li>
+                <li>Tier 1 (XGBoost) trained, validated on 2024 test year, metrics locked</li>
+                <li>Tier 2 (ConvLSTM) attempted — working or honestly reported as partial</li>
+                <li>Twin state object visibly versioned, Replay/Forecast/Scenario all work</li>
+                <li>Scenario engine never mutates canonical state</li>
+                <li>Scenario engine disclaimer present in UI copy, not just this document</li>
+                <li>Validation page shows skill score vs baseline, not just raw RMSE</li>
+                <li>One rehearsed scenario preset works reliably, end to end, offline</li>
+                <li>Today screen is the first thing shown in the demo</li>
+                <li>Slide deck follows Section 18 order</li>
+                <li>National Scale Deployment Roadmap slide explicitly lists INSAT full integration, Tier 3 uncertainty, and Copilot hardening as next steps</li>
+            </ul>
+            <div class="divider"></div>
+            <p style="text-align:center;font-weight:900;font-size:1.2rem;color:var(--primary-glow);">END OF DOCUMENT</p>
+        </section>
+
+        <!-- CTA SECTION -->
+        <section class="section-card" id="cta-download" style="text-align:center;background:var(--gradient-blue);border:none;">
+            <h2 style="color:#fff;"><span class="section-icon" style="background:rgba(255,255,255,0.2);">🚀</span> Ready to Build INDRA</h2>
+            <p style="color:rgba(255,255,255,0.9);font-size:1.1rem;margin-bottom:1.5rem;">Complete approach document with all 19 sections preserved. Follow the execution timeline for a 48-hour hackathon build.</p>
+            <div class="tag-pills" style="justify-content:center;">
+                <span class="tag-pill" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff;">48-Hour Plan</span>
+                <span class="tag-pill" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff;">3 AI Tiers</span>
+                <span class="tag-pill" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff;">Kerala Pilot</span>
+                <span class="tag-pill" style="background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.3);color:#fff;">IMD + INSAT</span>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ═══════════════ FOOTER ═══════════════ -->
+    <footer class="site-footer">
+        <p class="footer-brand">🌐 INDRA — Intelligent National Digital Replica for Atmosphere</p>
+        <p>BAH 2026 · Problem Statement 5 · AI-Powered Digital Twin of India's Climate · v2</p>
+        <p style="margin-top:0.4rem;">Built for a 48-hour hackathon PoC · <span style="color:var(--accent-bright);">Atmanirbhar Bharat</span> · National Climate Resilience</p>
+        <p style="margin-top:0.8rem;font-size:0.72rem;color:#4b5563;">Images via Unsplash — Kerala landscapes, satellite imagery, and technology concepts. All 19 sections preserved in full.</p>
+    </footer>
+
+</body>
+</html>
